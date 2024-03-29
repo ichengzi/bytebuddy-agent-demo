@@ -77,7 +77,7 @@ public class Main {
             try {
                 if (new Throwable().getStackTrace()[2].getClassName().startsWith("jdk.internal.reflect")) {
                     String fileName = (String) Class.forName("com.intellij.diagnostic.VMOptions").getDeclaredMethod("getFileName").invoke(null);
-                    String location = (String) Class.forName("com.intellij.openapi.application.PathManager").getDeclaredMethod("getCustomOptionsDirectory").invoke(null);
+                    String location = (String) Class.forName("com.intellij.openapi.application.PathManager").getDeclaredMethod("getBinPath").invoke(null);
                     ret = Paths.get(location, fileName);
                 }
             } catch (Exception e) {
