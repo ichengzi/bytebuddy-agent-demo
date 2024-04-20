@@ -7,6 +7,7 @@ import net.bytebuddy.matcher.ElementMatchers;
 import java.lang.instrument.Instrumentation;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -53,6 +54,15 @@ public class Main {
                 .transform(((builder, typeDescription, classLoader, javaModule, protectionDomain) ->
                         builder.visit(Advice.to(StringUtilsInterceptor.class).on(ElementMatchers.named("isEmpty")))))
                 .installOn(inst);
+        agentBuilder.type(ElementMatchers.named("java.lang.Class"))
+                .transform(((builder, typeDescription, classLoader, module, protectionDomain) ->
+                        builder.visit(Advice.to(ClassForNameInterceptor.class).on(ElementMatchers.named("forName")))))
+                .installOn(inst);
+
+//        agentBuilder.type(ElementMatchers.named("ڇଅ"))
+//                .transform(((builder, typeDescription, classLoader, javaModule, protectionDomain) ->
+//                        builder.visit(Advice.to(ReturnBoolInterceptor.class).on(ElementMatchers.named("ڥզ").and(ElementMatchers.returns(boolean.class))))))
+//                .installOn(inst);
     }
 
     public static class StringUtilsInterceptor {
@@ -85,6 +95,29 @@ public class Main {
             }
         }
     }
+
+    public static class ClassForNameInterceptor {
+        @Advice.OnMethodEnter
+        public static void interceptorBefore(@Advice.AllArguments Object[] args,
+                                             @Advice.Origin("#m") String methodName) {
+            if ("jdk.internal.org.objectweb.asm.Type".equals(args[0])) {
+//                System.out.println(Arrays.toString(new Throwable().getStackTrace()));
+                throw new RuntimeException("asm 用来修改字节码的");
+            }
+        }
+    }
+
+    public static class ReturnBoolInterceptor {
+        @Advice.OnMethodExit
+        public static void interceptor(@Advice.Return(readOnly = false) boolean ret) {
+            try {
+                ret = false;
+            } catch (Exception e) {
+                // ignore
+            }
+        }
+    }
+
 
     /**
      * 设置证书过期时间为 50 天，绕过大于 60 天的检测
