@@ -7,7 +7,6 @@ import net.bytebuddy.matcher.ElementMatchers;
 import java.lang.instrument.Instrumentation;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -98,9 +97,8 @@ public class Main {
 
     public static class ClassForNameInterceptor {
         @Advice.OnMethodEnter
-        public static void interceptorBefore(@Advice.AllArguments Object[] args,
-                                             @Advice.Origin("#m") String methodName) {
-            if ("jdk.internal.org.objectweb.asm.Type".equals(args[0])) {
+        public static void interceptorBefore(@Advice.AllArguments Object[] args) {
+            if (args[0] != null && args[0].toString().startsWith("jdk.internal.org.objectweb.asm")) {
 //                System.out.println(Arrays.toString(new Throwable().getStackTrace()));
                 throw new RuntimeException("asm 用来修改字节码的");
             }
