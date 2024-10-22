@@ -38,10 +38,10 @@ AgentBuilder agentBuilder = new AgentBuilder.Default()
 ```shell
 
 # linux or macos
-./gradlew jar
+./gradlew.sh jar
 
 # windows
-gradlew.bat jar
+gradlew.sh.bat jar
 ```
 
 ## 启动 Java Agent
