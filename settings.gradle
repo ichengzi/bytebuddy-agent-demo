@@ -1,2 +1,3 @@
-rootProject.name = 'agent-demo'
+rootProject.name = 'bytebuddy-agent-demo'
 include "demo"
+include "agent"
